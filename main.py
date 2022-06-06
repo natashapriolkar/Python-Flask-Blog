@@ -44,6 +44,7 @@ class Posts(db.Model):
 
 @app.route('/')
 def home():
+
     posts=Posts.query.all()
     last = math.ceil(len(posts)/int(params['no_of_posts']))
     page = request.args.get('page')
@@ -172,6 +173,17 @@ def uploader():
 def logout():
     session.pop('user')
     return redirect('/login')
+
+@app.route("/search", methods=['GET'])
+def search():
+    val = request.args.get('searched')
+    print(val)
+    if val:
+        posts=Posts.query.filter(Posts.title.contains(val) |
+        Posts.content.contains(val))
+    else:
+        posts=Posts.query.all()
+    return render_template("search.html", params=params, posts=posts)
     
 
 app.run(debug=True)
